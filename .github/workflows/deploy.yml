@@ -1,0 +1,30 @@
+name: Deploy to Google Cloud Functions
+
+on:
+  push:
+    branches:
+      - main  # Despliega solo cuando haya cambios en la rama principal
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        version: 'latest'
+        service_account_key: ${{ secrets.GCP_SA_KEY }}  # Lo configuraremos más adelante
+        project_id: sigma-icon-433002-r0  # Reemplaza con tu ID de proyecto
+
+    - name: Deploy to Google Cloud Functions
+      run: |
+        gcloud functions deploy helloWorld \
+          --runtime nodejs20 \
+          --trigger-http \
+          --allow-unauthenticated \
+          --gen2 \
+          --region southamerica-east1
